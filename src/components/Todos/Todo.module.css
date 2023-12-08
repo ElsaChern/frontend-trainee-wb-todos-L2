@@ -1,0 +1,83 @@
+.todo {
+    padding: 10px;
+    background-color: rgba(240, 248, 255, 0.844);
+    border-radius: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.nodeGroup {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: center;
+}
+
+.text {
+    font-size: 20px;
+}
+
+.description {
+    font-size: 16px;
+}
+
+.deadline {
+    font-size: 13px;
+}
+
+.noteIcon {
+    color: rgb(228, 174, 73);
+    padding: 10px;
+    font-size: 3rem;
+}
+
+.completedTodo {
+    border: 1px solid gray;
+    color: gray;
+}
+
+.actions {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.todo.completedTodo .noteIcon,
+.todo.completedTodo .checkIcon,
+.todo.completedTodo .deleteIcon,
+.todo.completedTodo .editIcon,
+.todo.completedTodo .text {
+    color: gray;
+    border: none;
+    text-decoration: line-through;
+}
+
+.checkIcon,
+.deleteIcon,
+.editIcon {
+    cursor: pointer;
+    color: grey;
+    padding: 0 7px;
+    font-size: 1.8rem;
+    transition: transform 0.3s;
+}
+
+.checkIcon:hover,
+.deleteIcon:hover,
+.editIcon:hover {
+    cursor: pointer;
+    transform: scale(1.3);
+}
+
+.checkIcon:hover {
+    color: green;
+}
+
+.editIcon:hover {
+    color: rgb(0, 28, 128);
+}
+
+.deleteIcon:hover {
+    color: red;
+}

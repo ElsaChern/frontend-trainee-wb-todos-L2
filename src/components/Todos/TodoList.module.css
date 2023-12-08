@@ -1,0 +1,24 @@
+.todoList {
+    background-color: #F1ECE6;
+    display: flex;
+    gap: 15px;
+    flex-direction: column;
+    width: 100%;
+    padding: 15px;
+}
+
+.todoListEmpty {
+    background-color: #F1ECE6;
+    height: 100vh;
+}
+
+.sortBtns {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.emptyText {
+    font-size: 25px;
+    text-shadow: 3px 4px 4px #393938;
+}
