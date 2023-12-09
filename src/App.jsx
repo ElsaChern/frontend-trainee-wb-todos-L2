@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import "./App.css";
 import TodoList from "./components/Todos/TodoList";
@@ -13,6 +13,10 @@ const App = () => {
   const [todo, setTodo] = useState({});
   const [modalActive, setModalActive] = useState(false);
 
+  useEffect(() => {
+    localStorage.setItem("todos", JSON.stringify(todos));
+  }, [todos]);
+
   const addTodosHandler = ({ text, description, deadline }) => {
     const newTodo = {
       text,
@@ -25,13 +29,12 @@ const App = () => {
     let savedTodos = todos;
     savedTodos = [...todos, newTodo];
     setTodos(savedTodos);
-    localStorage.setItem("todos", JSON.stringify(savedTodos));
+    checkDeadline(newTodo);
   };
 
   const deleteTodosHandler = (id) => {
     let remainingTodos = todos.filter((todo) => todo.id !== id);
     setTodos(remainingTodos);
-    localStorage.setItem("todos", JSON.stringify(remainingTodos));
   };
 
   const toggleCheckedHandler = (id) => {
@@ -41,12 +44,24 @@ const App = () => {
         : { ...todo },
     );
     setTodos(newTodos);
-    localStorage.setItem("todos", JSON.stringify(newTodos));
   };
 
   const editTodoHandler = (todo) => {
-    setModalActive(true);
     setTodo(todo);
+    setModalActive(true);
+    checkDeadline(todo);
+  };
+
+  const updatedTodos = (todo) => {
+    let indexTodo = todos.findIndex((curTodo) => curTodo.id === todo?.id);
+    let isEqual = JSON.stringify(todos[indexTodo]) === JSON.stringify(todo);
+
+    if (!isEqual) {
+      let startTodos = todos.slice(0, indexTodo);
+      let endTodos = todos.slice(indexTodo + 1);
+      let newTodos = [...startTodos, todo, ...endTodos];
+      setTodos(newTodos);
+    }
   };
 
   const sortByCreatedAtHandler = (coef) => {
@@ -65,13 +80,58 @@ const App = () => {
     );
   };
 
+  const checkDeadline = (todo = null) => {
+    const hour = 60 * 60 * 1000;
+    const handleDeadline = (todo) => {
+      let timeToDeadline = new Date(todo.deadline).getTime() - Date.now();
+
+      if (timeToDeadline < hour && timeToDeadline > 0) {
+        showPushNotification(todo);
+      }
+    };
+
+    if (!todos) {
+      return;
+    }
+
+    if (todo) {
+      handleDeadline(todo);
+    } else {
+      todos.forEach((item) => {
+        handleDeadline(item);
+      });
+    }
+
+    setTimeout(() => {
+      checkDeadline();
+    }, hour);
+  };
+
+  const showPushNotification = async (todo) => {
+    const registration = await navigator.serviceWorker.getRegistration();
+    Notification.requestPermission().then((permission) => {
+      if (permission !== "granted") {
+        alert("Разрешите отправку уведомлений");
+      } else {
+        registration.showNotification("Дедлайн близко!", {
+          body: `Срок задачи "${todo.text}" подходит к концу`,
+        });
+      }
+    });
+  };
+
+  checkDeadline();
+
   return (
     <>
-      <ModalWindow
-        active={modalActive}
-        setActive={setModalActive}
-        todo={todo}
-      />
+      {modalActive && (
+        <ModalWindow
+          active={modalActive}
+          setActive={setModalActive}
+          todo={todo}
+          edit={updatedTodos}
+        />
+      )}
       <Header />
       <div className="main">
         <TodoForm addTodo={addTodosHandler} />
