@@ -9,8 +9,8 @@ root.render(<App />);
 if ("serviceWorker" in navigator) {
   navigator.serviceWorker
     .register(`${process.env.PUBLIC_URL}/serviceWorker.js`)
-    .then((registration) => {
-      console.log("Service worker registration succeeded:", registration);
+    .then(() => {
+      console.log("Service worker registration succeeded");
     });
 } else {
   console.error("Service workers are not supported.");

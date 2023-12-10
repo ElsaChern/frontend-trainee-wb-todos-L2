@@ -13,10 +13,12 @@ const App = () => {
   const [todo, setTodo] = useState({});
   const [modalActive, setModalActive] = useState(false);
 
+  // Сохранение в localStorage при изменении списка задач
   useEffect(() => {
     localStorage.setItem("todos", JSON.stringify(todos));
   }, [todos]);
 
+  // Функция по добавлению новой задачи
   const addTodosHandler = ({ text, description, deadline }) => {
     const newTodo = {
       text,
@@ -32,11 +34,13 @@ const App = () => {
     checkDeadline(newTodo);
   };
 
+  // Функция удаления выбранной задачи
   const deleteTodosHandler = (id) => {
     let remainingTodos = todos.filter((todo) => todo.id !== id);
     setTodos(remainingTodos);
   };
 
+  // Функция позволяющая отмечать/убирать отметку о выполнении задачи
   const toggleCheckedHandler = (id) => {
     const newTodos = todos.map((todo) =>
       todo.id === id
@@ -46,12 +50,14 @@ const App = () => {
     setTodos(newTodos);
   };
 
+  // Функция реагирующая на кнопку "изменить" текстовое поле задачи
   const editTodoHandler = (todo) => {
     setTodo(todo);
     setModalActive(true);
     checkDeadline(todo);
   };
 
+  // Функция обновления измененной задачи
   const updatedTodos = (todo) => {
     let indexTodo = todos.findIndex((curTodo) => curTodo.id === todo?.id);
     let isEqual = JSON.stringify(todos[indexTodo]) === JSON.stringify(todo);
@@ -64,6 +70,7 @@ const App = () => {
     }
   };
 
+  // Сортировка по дате создания задач
   const sortByCreatedAtHandler = (coef) => {
     setTodos(
       [...todos].sort((a, b) =>
@@ -72,6 +79,7 @@ const App = () => {
     );
   };
 
+  // Сортировка по сроку выполнения  задач
   const sortByDeadlineHandler = (coef) => {
     setTodos(
       [...todos].sort((a, b) =>
@@ -80,6 +88,7 @@ const App = () => {
     );
   };
 
+  // Функция, проверяющая подходит ли срок задачи к концу
   const checkDeadline = (todo = null) => {
     const hour = 60 * 60 * 1000;
     const handleDeadline = (todo) => {
@@ -102,11 +111,13 @@ const App = () => {
       });
     }
 
+    // Планируем проверку на дедлайн через час
     setTimeout(() => {
       checkDeadline();
     }, hour);
   };
 
+  // Функция, отображающая уведобления в браузере
   const showPushNotification = async (todo) => {
     const registration = await navigator.serviceWorker.getRegistration();
     Notification.requestPermission().then((permission) => {
